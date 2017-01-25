@@ -1,10 +1,10 @@
-package com.udacity.stockhawk.data;
+package com.udacity.hnoct.stockhawk.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.udacity.stockhawk.R;
+import com.udacity.hnoct.stockhawk.R;
 
 import java.util.Arrays;
 import java.util.HashSet;

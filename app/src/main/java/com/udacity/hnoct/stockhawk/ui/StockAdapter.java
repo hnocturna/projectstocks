@@ -1,4 +1,4 @@
-package com.udacity.stockhawk.ui;
+package com.udacity.hnoct.stockhawk.ui;
 
 
 import android.content.Context;
@@ -9,9 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.udacity.stockhawk.R;
-import com.udacity.stockhawk.data.Contract;
-import com.udacity.stockhawk.data.PrefUtils;
+import com.udacity.hnoct.stockhawk.R;
+import com.udacity.hnoct.stockhawk.data.Contract;
+import com.udacity.hnoct.stockhawk.data.PrefUtils;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;

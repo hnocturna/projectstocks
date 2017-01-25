@@ -1,4 +1,4 @@
-package com.udacity.stockhawk;
+package com.udacity.hnoct.stockhawk;
 
 import android.app.Application;
 

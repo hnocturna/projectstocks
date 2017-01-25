@@ -11,7 +11,7 @@ android {
     buildToolsVersion "25.0.2"
 
     defaultConfig {
-        applicationId "com.udacity.stockhawk"
+        applicationId "com.udacity.hnoct.stockhawk"
         minSdkVersion 21
         targetSdkVersion 25
         versionCode 1
@@ -62,4 +62,5 @@ dependencies {
     compile 'com.jakewharton.timber:timber:4.4.0'
     compile 'net.sf.opencsv:opencsv:2.3'
     compile 'com.github.PhilJay:MPAndroidChart:v3.0.1'
+
 }

@@ -1,9 +1,11 @@
 package com.udacity.hnoct.stockhawk.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -12,6 +14,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,20 +36,29 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         StockAdapter.StockAdapterOnClickHandler {
 
     private static final int STOCK_LOADER = 0;
+
     @SuppressWarnings("WeakerAccess")
-    @BindView(R.id.recycler_view)
-    RecyclerView stockRecyclerView;
+    @BindView(R.id.recycler_view) RecyclerView stockRecyclerView;
     @SuppressWarnings("WeakerAccess")
-    @BindView(R.id.swipe_refresh)
-    SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.swipe_refresh) SwipeRefreshLayout swipeRefreshLayout;
     @SuppressWarnings("WeakerAccess")
-    @BindView(R.id.error)
-    TextView error;
+    @BindView(R.id.error) TextView error;
+    @BindView(R.id.toolbar) Toolbar toolbar;
+
     private StockAdapter adapter;
 
     @Override
     public void onClick(String symbol) {
+        // Start the Details Activity when list item is clicked
         Timber.d("Symbol clicked: %s", symbol);
+
+        // Generate the URI
+        Uri stockUri = Contract.Quote.makeUriForStock(symbol);
+
+        // Attach URI to the Intent and start the new Activity
+        Intent intent = new Intent(this, DetailStockActivity.class);
+        intent.setData(stockUri);
+        startActivity(intent);
     }
 
     @Override
@@ -55,6 +67,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        // Set ActionBar as the Toolbar
+        setSupportActionBar(toolbar);
 
         adapter = new StockAdapter(this, this);
         stockRecyclerView.setAdapter(adapter);

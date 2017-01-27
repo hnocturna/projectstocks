@@ -19,6 +19,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder> {
 
@@ -65,11 +66,14 @@ class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder> {
     public void onBindViewHolder(StockViewHolder holder, int position) {
 
         cursor.moveToPosition(position);
+        // Initialize variables for views
+        String symbol = cursor.getString(Contract.Quote.POSITION_SYMBOL);
+        float price = cursor.getFloat(Contract.Quote.POSITION_PRICE);
 
-
-        holder.symbol.setText(cursor.getString(Contract.Quote.POSITION_SYMBOL));
-        holder.price.setText(dollarFormat.format(cursor.getFloat(Contract.Quote.POSITION_PRICE)));
-
+        holder.symbol.setText(symbol);
+        holder.symbol.setContentDescription(symbol);
+        holder.price.setText(dollarFormat.format(price));
+        holder.price.setContentDescription(context.getString(R.string.content_stock_symbol_price, price));
 
         float rawAbsoluteChange = cursor.getFloat(Contract.Quote.POSITION_ABSOLUTE_CHANGE);
         float percentageChange = cursor.getFloat(Contract.Quote.POSITION_PERCENTAGE_CHANGE);
@@ -83,14 +87,23 @@ class StockAdapter extends RecyclerView.Adapter<StockAdapter.StockViewHolder> {
         String change = dollarFormatWithPlus.format(rawAbsoluteChange);
         String percentage = percentageFormat.format(percentageChange / 100);
 
+        String changeContentDescription;
         if (PrefUtils.getDisplayMode(context)
                 .equals(context.getString(R.string.pref_display_mode_absolute_key))) {
             holder.change.setText(change);
+            if (rawAbsoluteChange >= 0) {
+                holder.change.setContentDescription(context.getString(R.string.content_stock_symbol_up_absolute, rawAbsoluteChange));
+            } else {
+                holder.change.setContentDescription(context.getString(R.string.content_stock_symbol_down_absolute, Math.abs(rawAbsoluteChange)));
+            }
         } else {
             holder.change.setText(percentage);
+            if (percentageChange >= 0) {
+                holder.change.setContentDescription(context.getString(R.string.content_stock_symbol_up_percent, percentageChange));
+            } else {
+                holder.change.setContentDescription(context.getString(R.string.content_stock_symbol_down_percent, Math.abs(percentageChange)));
+            }
         }
-
-
     }
 
     @Override

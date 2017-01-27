@@ -22,6 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:focusable="true"
         app:columnCount="4">
 
         <TextView
@@ -30,6 +31,7 @@
             app:layout_rowWeight="1"
             app:layout_columnWeight="1"
             android:gravity="center"
+            android:focusable="false"
             style="@style/StockSymbolTextStyle"
             tools:text="GOOG"
             />
@@ -43,6 +45,7 @@
             app:layout_rowSpan="2"
             android:layout_marginEnd="@dimen/default_horizontal_margin"
             android:gravity="end|center_vertical"
+            android:focusable="false"
             tools:text="$1000"/>
 
         <TextView
@@ -55,6 +58,7 @@
             android:gravity="bottom"
             android:background="@drawable/percent_change_pill_green"
             android:layout_marginTop="@dimen/thin_vertical_margin"
+            android:focusable="false"
             tools:text="+20%"
             />
 
@@ -68,6 +72,7 @@
             android:gravity="top"
             android:background="@drawable/percent_change_pill_green"
             android:layout_marginTop="@dimen/thin_vertical_margin"
+            android:focusable="false"
             tools:text="+$200" />
     </android.support.v7.widget.GridLayout>
 

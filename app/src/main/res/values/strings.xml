@@ -1,25 +1,23 @@
-<resources>
-    <string name="app_name">Stock Hawk</string>
+<resources xmlns:xliff="http://schemas.android.com/tools">
+    <string name="app_name" translatable="false">Stock Hawk</string>
 
     <string name="pref_stocks_initialized_key" translatable="false">initialized</string>
 
-    <string name="pref_stocks_key">stocks</string>
+    <string name="pref_stocks_key" translatable="false">stocks</string>
 
 
-    <string name="pref_display_mode_key">displayMode</string>
+    <string name="pref_display_mode_key" translatable="false">displayMode</string>
     <string name="pref_display_mode_default">@string/pref_display_mode_percentage_key</string>
 
-    <string name="pref_display_mode_absolute_key">absolute</string>
-    <string name="pref_display_mode_percentage_key">percentage</string>
+    <string name="pref_display_mode_absolute_key" translatable="false">absolute</string>
+    <string name="pref_display_mode_percentage_key" translatable="false">percentage</string>
 
-    <string name="default_stocks_yahoo">YHOO</string>
-    <string name="default_stocks_apple">AAPL</string>
-    <string name="default_stocks_microsoft">MSFT</string>
-    <string name="default_stocks_facebook">FB</string>
-
+    <string name="default_stocks_yahoo" translatable="false">YHOO</string>
+    <string name="default_stocks_apple" translatable="false">AAPL</string>
+    <string name="default_stocks_microsoft" translatable="false">MSFT</string>
+    <string name="default_stocks_facebook" translatable="false">FB</string>
 
     <string name="action_change_units">@string/pref_display_mode_key</string>
-
 
     <string name="dialog_title">Add Stock</string>
     <string name="dialog_hint">Symbol (e.g. GOOG)</string>
@@ -34,4 +32,14 @@
     <string name="title_activity_detail_stock">DetailStockActivity</string>
     <string name="action_settings">Settings</string>
 
+    <!-- Content descriptions -->
+    <string name="content_stock_symbol_up_percent">Up <xliff:g id="percent">%1.2f %%</xliff:g></string>
+    <string name="content_stock_symbol_down_percent">Down <xliff:g id="percent">%1.2f %%</xliff:g></string>
+
+    <string name="content_stock_symbol_up_absolute">Up <xliff:g id="dollars">%1.2f dollars</xliff:g></string>
+    <string name="content_stock_symbol_down_absolute">Down <xliff:g id="dollars">%1.2f dollars</xliff:g></string>
+
+    <string name="content_stock_symbol_price">Currently trading at <xliff:g id="dollars">%1.2f dollars</xliff:g></string>
+
+    <string name="content_marker_description">$1%s <xliff:g id="dollars">%1.2f dollars</xliff:g></string>
 </resources>

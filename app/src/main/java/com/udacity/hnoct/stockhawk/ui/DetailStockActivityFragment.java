@@ -133,11 +133,22 @@ public class DetailStockActivityFragment extends Fragment implements LoaderManag
             changePercentText.setBackground(getResources().getDrawable(R.drawable.percent_change_pill_red, null));
         }
 
-        // Fill the views with data
+        // Fill the views with data and set content descriptions
         symbolText.setText(symbol);
+        symbolText.setContentDescription(symbol);
         priceText.setText(PrefUtils.formatDollars(price));
+        priceText.setContentDescription(getActivity().getString(R.string.content_stock_symbol_price, price));
         changePercentText.setText(PrefUtils.formatPercentage(percentChange / 100));
         changeAbsoluteText.setText(PrefUtils.formatDollarsWithPlus(absoluteChange));
+
+        // Set Content Descriptions
+        if (absoluteChange >= 0) {
+            changePercentText.setContentDescription(getActivity().getString(R.string.content_stock_symbol_up_percent, percentChange));
+            changeAbsoluteText.setContentDescription(getActivity().getString(R.string.content_stock_symbol_up_absolute, absoluteChange));
+        } else {
+            changePercentText.setContentDescription(getActivity().getString(R.string.content_stock_symbol_down_percent, Math.abs(percentChange)));
+            changeAbsoluteText.setContentDescription(getActivity().getString(R.string.content_stock_symbol_down_absolute, Math.abs(absoluteChange)));
+        }
 
         // Convert the historical data to graphable data
         List<Entry> historicalEntries = PrefUtils.createGraphEntries(data.getString(IDX_HISTORY));
@@ -146,7 +157,6 @@ public class DetailStockActivityFragment extends Fragment implements LoaderManag
             Timber.v("No historical data found!");
             return;
         }
-        Timber.v(historicalEntries.toString());
 
         final LineDataSet dataSet = new LineDataSet(historicalEntries, "Historical Stock Data");
 
@@ -157,7 +167,7 @@ public class DetailStockActivityFragment extends Fragment implements LoaderManag
         XAxis xAxis = stockChart.getXAxis();
         final DateAxisValueFormatter dateAxisFormatter = new DateAxisValueFormatter(1);
         xAxis.setValueFormatter(dateAxisFormatter);
-        xAxis.setLabelCount(4);
+        xAxis.setLabelCount(4);     // Max number of X-Axis labels on screen at once
 
         YAxis yAxis = stockChart.getAxisLeft();
         yAxis.setValueFormatter(new StockAxisValueFormatter());
@@ -175,25 +185,26 @@ public class DetailStockActivityFragment extends Fragment implements LoaderManag
             dataSet.setValueTextColor(getResources().getColor(android.R.color.white));
         }
 
-        dataSet.setDrawFilled(true);
-        dataSet.setFillDrawable(getResources().getDrawable(R.drawable.graph_gradient_fill, null));
+        dataSet.setDrawFilled(true);                                    // Gives the line a fill below to color the graph
+        dataSet.setFillDrawable(getResources().getDrawable(R.drawable.graph_gradient_fill, null));      // Use custom gradient for fill
         dataSet.setLineWidth(2);
-        dataSet.setDrawCircles(false);
-        dataSet.setDrawValues(false);
-        dataSet.setAxisDependency(YAxis.AxisDependency.RIGHT);
+        dataSet.setDrawCircles(false);                                  // Disable drawing each data point
+        dataSet.setDrawValues(false);                                   // Disable display of each data point
         LineData stockData = new LineData(dataSet);
 
         stockChart.setMarker(new StockMarkerView(getActivity(), R.layout.stock_marker_view, stockChart));
-        stockChart.setAutoScaleMinMaxEnabled(true);     // Scales the graph so data is always in view
-        stockChart.setKeepPositionOnRotation(true);     // Keeps same position on rotation
+        stockChart.setAutoScaleMinMaxEnabled(true);                         // Scales the graph so data is always in view
+        stockChart.setKeepPositionOnRotation(true);                         // Keeps same position on rotation
         stockChart.setData(stockData);
-        stockChart.getViewPortHandler().setMaximumScaleX(31.738262f);
+        stockChart.getLegend().setEnabled(false);                           // Disable legend
+        stockChart.getViewPortHandler().setMaximumScaleX(31.738262f);       // Set the max zoom so for best viewability
         stockChart.animateX(750);
 
         stockChart.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 float visibleRange = stockChart.getVisibleXRange();
+                // Set the format of the axis depending on how close the user has zoomed in
                 if (dateAxisFormatter.getScale() != 1 && visibleRange > YEAR_IN_MILLIS) {
                     dateAxisFormatter.setScale(1);
                 } else if (dateAxisFormatter.getScale() != 2 && visibleRange < YEAR_IN_MILLIS && visibleRange > MONTH_IN_MILLIS) {
@@ -211,6 +222,7 @@ public class DetailStockActivityFragment extends Fragment implements LoaderManag
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        // Initialize the Loader
         getLoaderManager().initLoader(DETAIL_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
     }

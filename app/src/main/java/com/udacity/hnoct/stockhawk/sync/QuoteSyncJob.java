@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.widget.Toast;
 
 import com.udacity.hnoct.stockhawk.data.Contract;
 import com.udacity.hnoct.stockhawk.data.PrefUtils;
@@ -72,6 +73,13 @@ public final class QuoteSyncJob {
                 String symbol = iterator.next();
 
                 Stock stock = quotes.get(symbol);
+                if (stock.getName() == null || stock.getName().equals("")) {
+
+                    Toast.makeText(context.getApplicationContext(), symbol + " not found.", Toast.LENGTH_LONG).show();
+                    PrefUtils.removeStock(context, symbol);
+                    continue;
+                }
+
                 StockQuote quote = stock.getQuote();
 
                 float price = quote.getPrice().floatValue();

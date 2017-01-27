@@ -41,6 +41,7 @@
             app:layout_columnWeight="2"
             app:layout_rowWeight="1"
             app:layout_rowSpan="2"
+            android:layout_marginEnd="@dimen/default_horizontal_margin"
             android:gravity="end|center_vertical"
             tools:text="$1000"/>
 
@@ -49,9 +50,11 @@
             style="@style/PercentChangeTextStyle"
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
-            app:layout_gravity="center"
-            android:gravity="center"
+            app:layout_gravity="center|bottom"
+            android:padding="@dimen/pill_padding"
+            android:gravity="bottom"
             android:background="@drawable/percent_change_pill_green"
+            android:layout_marginTop="@dimen/thin_vertical_margin"
             tools:text="+20%"
             />
 
@@ -60,9 +63,11 @@
             style="@style/PercentChangeTextStyle"
             app:layout_columnWeight="1"
             app:layout_rowWeight="1"
-            app:layout_gravity="center"
-            android:gravity="center"
+            app:layout_gravity="center|top"
+            android:padding="@dimen/pill_padding"
+            android:gravity="top"
             android:background="@drawable/percent_change_pill_green"
+            android:layout_marginTop="@dimen/thin_vertical_margin"
             tools:text="+$200" />
     </android.support.v7.widget.GridLayout>
 

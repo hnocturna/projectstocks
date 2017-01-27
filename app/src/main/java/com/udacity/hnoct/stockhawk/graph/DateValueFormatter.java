@@ -1,8 +1,9 @@
-package com.udacity.hnoct.stockhawk.data;
+package com.udacity.hnoct.stockhawk.graph;
 
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.utils.ViewPortHandler;
+import com.udacity.hnoct.stockhawk.data.PrefUtils;
 
 /**
  * Created by hnoct on 1/24/2017.

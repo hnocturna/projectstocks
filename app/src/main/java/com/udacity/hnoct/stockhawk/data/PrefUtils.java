@@ -8,17 +8,14 @@ import android.util.Log;
 import com.github.mikephil.charting.data.Entry;
 import com.udacity.hnoct.stockhawk.R;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringBufferInputStream;
-import java.io.StringReader;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import timber.log.Timber;
@@ -27,6 +24,41 @@ public final class PrefUtils {
 
     private PrefUtils() {
     }
+
+    /**
+     *
+     * @param price
+     * @return
+     */
+    public static String formatDollars(float price) {
+        DecimalFormat dollarFormat = (DecimalFormat) NumberFormat.getCurrencyInstance(Locale.US);
+        return dollarFormat.format(price);
+    }
+
+    /**
+     *
+     * @param price
+     * @return
+     */
+    public static String formatDollarsWithPlus(float price) {
+        DecimalFormat dollarFormatWithPlus = (DecimalFormat) NumberFormat.getCurrencyInstance(Locale.US);
+        dollarFormatWithPlus.setPositivePrefix("+$");
+        return dollarFormatWithPlus.format(price);
+    }
+
+    /**
+     *
+     * @param percentage
+     * @return
+     */
+    public static String formatPercentage(float percentage) {
+        DecimalFormat percentageFormat = (DecimalFormat) NumberFormat.getPercentInstance(Locale.getDefault());
+        percentageFormat.setMaximumFractionDigits(2);
+        percentageFormat.setMinimumFractionDigits(2);
+        percentageFormat.setPositivePrefix("+");
+        return percentageFormat.format(percentage);
+    }
+
 
     public static Set<String> getStocks(Context context) {
         String stocksKey = context.getString(R.string.pref_stocks_key);
@@ -144,6 +176,11 @@ public final class PrefUtils {
 
     public static String getFormattedMonthDayShort(long dateInMillis) {
         SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, ''yy");
+        return sdf.format(dateInMillis);
+    }
+
+    public static String getFormattedMonthYear(long dateInMillis) {
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM yyyy");
         return sdf.format(dateInMillis);
     }
 }

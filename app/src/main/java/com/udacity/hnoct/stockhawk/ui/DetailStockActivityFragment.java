@@ -2,6 +2,7 @@ package com.udacity.hnoct.stockhawk.ui;
 
 import android.app.Fragment;
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
@@ -9,8 +10,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -18,13 +21,13 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.DefaultFillFormatter;
 import com.udacity.hnoct.stockhawk.R;
 import com.udacity.hnoct.stockhawk.data.Contract;
-import com.udacity.hnoct.stockhawk.data.DateAxisValueFormatter;
-import com.udacity.hnoct.stockhawk.data.DateValueFormatter;
+import com.udacity.hnoct.stockhawk.graph.DateAxisValueFormatter;
+import com.udacity.hnoct.stockhawk.graph.DateValueFormatter;
 import com.udacity.hnoct.stockhawk.data.PrefUtils;
-import com.udacity.hnoct.stockhawk.data.StockAxisValueFormatter;
+import com.udacity.hnoct.stockhawk.graph.StockAxisValueFormatter;
+import com.udacity.hnoct.stockhawk.graph.StockMarkerView;
 
 import java.util.List;
 
@@ -39,6 +42,8 @@ public class DetailStockActivityFragment extends Fragment implements LoaderManag
     /*Constants*/
     private final static String LOG_TAG = DetailStockActivityFragment.class.getSimpleName();
     private final static int DETAIL_LOADER = 1;
+    private final static float MONTH_IN_MILLIS = 86400f * 7 * 30 * 1000;
+    private final static float YEAR_IN_MILLIS = 86400f * 365 * 1000;
 
     // Column Projection
     private static final String[] STOCK_COLUMNS = new String[] {
@@ -60,6 +65,10 @@ public class DetailStockActivityFragment extends Fragment implements LoaderManag
 
     // Views to be populated
     @BindView(R.id.detail_stock_chart) LineChart stockChart;
+    @BindView(R.id.symbol) TextView symbolText;
+    @BindView(R.id.price) TextView priceText;
+    @BindView(R.id.changeAbsolute) TextView changeAbsoluteText;
+    @BindView(R.id.changePercent) TextView changePercentText;
 
     /*Member Variables*/
     Uri mStockUri;
@@ -112,6 +121,24 @@ public class DetailStockActivityFragment extends Fragment implements LoaderManag
             return;
         }
 
+        // Retrieve data for stock
+        String symbol = data.getString(IDX_SYMBOL);
+        float price = data.getFloat(IDX_PRICE);
+        float percentChange = data.getFloat(IDX_PERCENT_CHANGE);
+        float absoluteChange = data.getFloat(IDX_ABSOLUTE_CHANGE);
+
+        if (absoluteChange < 0) {
+            // If the change is negative, set the background of the text to red
+            changeAbsoluteText.setBackground(getResources().getDrawable(R.drawable.percent_change_pill_red, null));
+            changePercentText.setBackground(getResources().getDrawable(R.drawable.percent_change_pill_red, null));
+        }
+
+        // Fill the views with data
+        symbolText.setText(symbol);
+        priceText.setText(PrefUtils.formatDollars(price));
+        changePercentText.setText(PrefUtils.formatPercentage(percentChange / 100));
+        changeAbsoluteText.setText(PrefUtils.formatDollarsWithPlus(absoluteChange));
+
         // Convert the historical data to graphable data
         List<Entry> historicalEntries = PrefUtils.createGraphEntries(data.getString(IDX_HISTORY));
         if (historicalEntries == null || historicalEntries.size() == 0) {
@@ -121,15 +148,16 @@ public class DetailStockActivityFragment extends Fragment implements LoaderManag
         }
         Timber.v(historicalEntries.toString());
 
-        LineDataSet dataSet = new LineDataSet(historicalEntries, "Historical Stock Data");
+        final LineDataSet dataSet = new LineDataSet(historicalEntries, "Historical Stock Data");
 
         // Plot the values as dates instead of millis
         dataSet.setValueFormatter(new DateValueFormatter());
 
         // Set formatter for X and Y-axis
         XAxis xAxis = stockChart.getXAxis();
-        xAxis.setValueFormatter(new DateAxisValueFormatter());
-        xAxis.setLabelCount(4, true);
+        final DateAxisValueFormatter dateAxisFormatter = new DateAxisValueFormatter(1);
+        xAxis.setValueFormatter(dateAxisFormatter);
+        xAxis.setLabelCount(4);
 
         YAxis yAxis = stockChart.getAxisLeft();
         yAxis.setValueFormatter(new StockAxisValueFormatter());
@@ -149,10 +177,31 @@ public class DetailStockActivityFragment extends Fragment implements LoaderManag
 
         dataSet.setDrawFilled(true);
         dataSet.setFillDrawable(getResources().getDrawable(R.drawable.graph_gradient_fill, null));
+        dataSet.setLineWidth(2);
+        dataSet.setDrawCircles(false);
+        dataSet.setDrawValues(false);
+        dataSet.setAxisDependency(YAxis.AxisDependency.RIGHT);
         LineData stockData = new LineData(dataSet);
 
+        stockChart.setMarker(new StockMarkerView(getActivity(), R.layout.stock_marker_view, stockChart));
+        stockChart.setAutoScaleMinMaxEnabled(true);     // Scales the graph so data is always in view
+        stockChart.setKeepPositionOnRotation(true);     // Keeps same position on rotation
         stockChart.setData(stockData);
-        stockChart.invalidate();
+        stockChart.getViewPortHandler().setMaximumScaleX(31.738262f);
+        stockChart.animateX(750);
+
+        stockChart.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                float visibleRange = stockChart.getVisibleXRange();
+                if (dateAxisFormatter.getScale() != 1 && visibleRange > YEAR_IN_MILLIS) {
+                    dateAxisFormatter.setScale(1);
+                } else if (dateAxisFormatter.getScale() != 2 && visibleRange < YEAR_IN_MILLIS && visibleRange > MONTH_IN_MILLIS) {
+                    dateAxisFormatter.setScale(2);
+                }
+                return false;
+            }
+        });
     }
 
     @Override
